@@ -1,0 +1,24 @@
+.back{
+    background-color:lightgray;
+}
+
+.select-design{
+    background-color: aliceblue;border: 2px groove black; border-radius: 8px;
+}
+.select-design option{
+    background-color: aliceblue;border: 2px groove black; border-radius: 8px;
+}
+.title{
+    background-color: aliceblue;
+    text-align:center ;
+}
+
+.completed{
+    background-color:#93dd9c;
+}
+.prog{
+    background-color: #93e0ec;
+}
+.hold{
+    background-color: #fff68f;
+}

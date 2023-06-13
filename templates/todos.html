@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDos List</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="./public/css/style.css">
+</head>
+<body class="back">
+    <div class="container">
+        <div class="row mt-2">
+            <h1 class="title">Todos List</h1>
+            <!-- Model Start -->
+            <div class="modal fade" id="myModal">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+              
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                      <h4 class="modal-title" >Add Todos</h4>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+              
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                      <form action="/addtodo" method="post">
+                            <div class="mb-3">
+                                 <label for="" class="form-label">Todo Name:</label>
+                                 <input type="text" class="form-control" name="todoname" id="todoname">
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="form-label">Todo Desc:</label>
+                                <input type="text" class="form-control" name="tododesc" id="tododesc">
+                            </div>
+                            <div class="mb-3">
+                                <input type="submit" value="Add Todo" class="form-control btn btn-success" >
+                            </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <h1>Todos</h1> 
+                {{range .todos}}
+                    {{ if eq .Stage "todo"}}
+                <div class="card mb-3 " style="width: 15rem; background-color:#e6e6fa;" id="{{.ID}}">
+                    <img src="./public/images/todo.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">{{.Todoname}}</h5>
+                      <p class="card-text">{{.Tododesc}}</p>
+                       
+                      <select name="stage" id="{{ .ID}}" onchange="stateChange(this)" class="select-design">
+                        <option value="" selected disabled >Move to</option>
+                        <option value="hold">On Hold</option>
+                        <option value="progress">Progress</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    </div>
+                </div>
+                    {{end}}
+                {{end}}
+                <p class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Add ToDos</p>
+            
+            </div>
+            <div class="col-3" id="hold">
+                <h1>On Hold</h1>
+                {{range .todos}}
+                {{ if eq .Stage "hold"}}
+            <div class="card mb-3 hold" style="width: 15rem;" id="{{.ID}}">
+                <img src="./public/images/todo.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">{{.Todoname}}</h5>
+                  <p class="card-text">{{.Tododesc}}</p>
+                  <select name="stage" id="{{ .ID}}" onchange="stateChange(this)" class="select-design">
+                    <option value="" selected disabled >Move to</option>
+                    <option value="progress">Progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+            </div>
+                {{end}}
+            {{end}}
+            </div>
+            <div class="col-3" id="progress">
+                <h1>In Progress</h1>
+                {{range .todos}}
+                {{ if eq .Stage "progress"}}
+            <div class="card mb-3 prog" style="width: 15rem;" id="{{.ID}}">
+                <img src="./public/images/todo.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">{{.Todoname}}</h5>
+                  <p class="card-text">{{.Tododesc}}</p>
+                  <select name="stage" id="{{ .ID}}" onchange="stateChange(this)" class="select-design">
+                    <option value="" selected disabled >Move to</option>
+                    <option value="hold">On Hold</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+            </div>
+                {{end}}
+            {{end}}
+            </div>
+            <div class="col-3" id="complete">
+                <h1>Completed</h1>
+                {{range .todos}}
+                {{ if eq .Stage "completed"}}
+            <div class="card mb-3 completed" style="width: 15rem;" id="{{.ID}}">
+                <img src="./public/images/todo.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">{{.Todoname}}</h5>
+                  <p class="card-text">{{.Tododesc}}</p>
+                  <select name="stage" id="{{ .ID}}" onchange="stateChange(this)" class="select-design">
+                    <option value="" selected disabled >Move to</option>
+                    <option value="hold">On Hold</option>
+                    <option value="progress">Progress</option>
+                  </select>
+                </div>
+            </div>
+                {{end}}
+            {{end}}
+            </div>
+            
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>   
+   
+
+
+
+    <script>
+        async function stateChange(data) {
+            console.log("state:::",data.value);
+            let id = data.id
+            let value = data.value
+            let todos = ``;
+            if (value=="hold") {
+                let res = await fetch(`/hold?id=${id}&stage=${value}`);
+                let ans = await res.json();
+                console.log("data :- ",ans);
+                console.log("id",ans[0].ID)
+                var div = document.getElementById("hold")
+                document.getElementById(ans[0].ID).remove()
+                todos +=`<div class="card mb-3 hold" style="width: 15rem;" id="${ans[0].ID}">
+                <img src="./public/images/todo.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">${ans[0].Todoname}</h5>
+                  <p class="card-text">${ans[0].Tododesc}</p>
+                  <select name="stage" id="${ans[0].ID}" onchange="stateChange(this)" class="select-design">
+                    <option value="" selected disabled >Move to</option>
+                    <option value="progress">Progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+            </div>`
+            div.innerHTML += todos;
+            }
+            if (value=="progress") {
+               let res = await fetch(`/hold?id=${id}&stage=${value}`)
+                let ans = await res.json();
+                console.log("data :- ",ans);
+                console.log("data :- ",ans);
+                console.log("id",ans[0].ID)
+                var div = document.getElementById("progress")
+                document.getElementById(ans[0].ID).remove()
+                todos +=` <div class="card mb-3 prog" style="width: 15rem;" id="${ans[0].ID}">
+                <img src="./public/images/todo.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">${ans[0].Todoname}</h5>
+                  <p class="card-text">${ans[0].Tododesc}</p>
+                  <select name="stage" id="${ans[0].ID}" onchange="stateChange(this)" class="select-design">
+                    <option value="" selected disabled >Move to</option>
+                    <option value="hold">On Hold</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+            </div>`
+            div.innerHTML += todos;
+            }
+            if (value=="completed") {
+                let res = await fetch(`/hold?id=${id}&stage=${value}`)
+                let ans = await res.json();
+                console.log("data :- ",ans);
+                console.log("data :- ",ans);
+                console.log("data :- ",ans);
+                console.log("id",ans[0].Id)
+                var div = document.getElementById("complete")
+                document.getElementById(ans[0].ID).remove()
+                todos +=` <div class="card mb-3 completed" style="width: 15rem;" id="${ans[0].ID}">
+                <img src="./public/images/todo.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">${ans[0].Todoname}</h5>
+                  <p class="card-text">${ans[0].Tododesc}</p>
+                  <select name="stage" id="${ans[0].ID}" onchange="stateChange(this)" class="select-design">
+                    <option value="" selected disabled >Move to</option>
+                    <option value="hold">On Hold</option>
+                    <option value="progress">Progress</option>
+                  </select>
+                </div>
+            </div>`
+            div.innerHTML += todos;
+            }
+        }
+    </script>
+</body>
+</html>
