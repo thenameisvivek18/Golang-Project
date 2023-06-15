@@ -1,5 +1,11 @@
+body{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+   
+    overflow: hidden;
+}
+
 .back{
-    background-color:lightgray;
+    background-color:#fff;
 }
 
 .select-design{
@@ -9,16 +15,46 @@
     background-color: aliceblue;border: 2px groove black; border-radius: 8px;
 }
 .title{
-    background-color: aliceblue;
+    background-color: #D2E9E9 ;
     text-align:center ;
+    border-radius: 8px;
+    
+}
+.todo-column{
+    overflow-y: scroll;
+    height: 500px;
+   margin-top: 0.5rem;
 }
 
+.todo-column::-webkit-scrollbar {
+    width: 6px;
+  }
+  .todo-column::-webkit-scrollbar-track {
+    background-color:#F8F6F4 ;
+    border-radius: 100px;
+  }
+  .todo-column::-webkit-scrollbar-thumb {
+    background-color: #D2E9E9;
+    border-radius: 100px;
+  }
 .completed{
-    background-color:#93dd9c;
+    /* background-color:#93dd9c; */
+    background-color: #E3F4F4;
+    
 }
+
+/* .completed:hover{
+    transform: scale(1.1);
+    transition: .3s;
+} */
 .prog{
-    background-color: #93e0ec;
+    /* background-color: #93e0ec; */
+    background-color: #E3F4F4;
 }
 .hold{
-    background-color: #fff68f;
+    /* background-color: #fff68f; */
+    background-color: #E3F4F4;
+}
+.btn-add{
+    background-color: #C4DFDF;
 }

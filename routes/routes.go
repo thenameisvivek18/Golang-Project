@@ -8,7 +8,7 @@ import (
 
 func GetApi(routes *gin.Engine) {
 	routes.GET("/", controllers.GetTodo)
-	routes.GET("/hold", controllers.Hold)
+	routes.GET("/update", controllers.Hold)
 
 	routes.POST("/addtodo", controllers.AddTodo)
 }

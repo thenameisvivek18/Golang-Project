@@ -14,4 +14,5 @@ func GetTodo(c *gin.Context) {
 	c.HTML(http.StatusOK, "todos.html", gin.H{
 		"todos": todos,
 	})
+
 }

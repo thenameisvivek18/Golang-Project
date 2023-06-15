@@ -6,8 +6,15 @@ import (
 
 type Todo struct {
 	gorm.Model
-	ID       int
-	Todoname string `form:"todoname"`
-	Tododesc string `form:"tododesc"`
-	Stage    string
+	Id          int
+	Todoname    string `form:"todoname"`
+	Tododesc    string `form:"tododesc"`
+	Stage       string
+	Attachments []Attachment
+}
+type Attachment struct {
+	gorm.Model
+	ID     int
+	Files  string
+	TodoID int
 }

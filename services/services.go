@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"to-do-list/initializer"
 	"to-do-list/model"
 )
@@ -8,7 +9,9 @@ import (
 var Data []model.Todo
 
 func GetTodos() []model.Todo {
-	initializer.DB.Find(&Data)
+	if err := initializer.DB.Preload("Attachments").Find(&Data).Error; err != nil {
+		fmt.Println("error in fetch ", err)
+	}
 	return Data
 }
 
@@ -17,7 +20,11 @@ func UpdateTodo(id int, stage string) {
 }
 
 func GetUpdatedTodo(id int) []model.Todo {
-	initializer.DB.Where("id=?", id).Find(&Data)
+	initializer.DB.Where("id=?", id).Preload("Attachments").Find(&Data)
 	return Data
+
+}
+
+func UpdateTodoData(id int) {
 
 }
