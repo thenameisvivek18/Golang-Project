@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
 
 	// "to-do-list/initializer"
 
@@ -88,46 +89,97 @@ func AddTodo(c *gin.Context) {
 	// Check if the todo ID is provided
 	if todo_id != "" {
 		// Update an existing todo
-		initializer.DB.First(&todo, todo_id)
-	}
+		initializer.DB.Preload("Attachments").First(&todo, todo_id)
 
-	// Update the todo fields
-	todo.Todoname = c.PostForm("todoname")
-	todo.Tododesc = c.PostForm("tododesc")
-	todo.Stage = "todo"
+		// Update the todo fields
+		todo.Todoname = c.PostForm("todoname")
+		todo.Tododesc = c.PostForm("tododesc")
+		todo.Stage = "todo"
 
-	// Save the todo record
-	initializer.DB.Save(&todo)
+		// Save the todo record
+		initializer.DB.Save(&todo)
 
-	// Get the attachments from the request
-	form, err := c.MultipartForm()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	// Create or update the attachments
-	files := form.File["myfile"]
-	attachments := make([]model.Attachment, len(files))
-
-	for i, file := range files {
-		err = c.SaveUploadedFile(file, "/home/vivek-valand/go/src/to-do-list/assets/images/"+file.Filename)
+		// Get the attachments from the request
+		form, err := c.MultipartForm()
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		// Create or update the attachment record
-		attachment := model.Attachment{
-			Files:  "/assets/images/" + file.Filename,
-			TodoID: todo.Id,
+		// Create or update the attachments
+		files := form.File["myfile"]
+		attachments := make([]model.Attachment, len(files))
+
+		for i, file := range files {
+			err = c.SaveUploadedFile(file, "/home/vivek-valand/go/src/to-do-list/assets/images/"+file.Filename)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			// Create or update the attachment record
+			attachment := model.Attachment{
+				Files:  "/assets/images/" + file.Filename,
+				TodoID: todo.Id,
+			}
+			initializer.DB.Where(model.Attachment{ID: i + 1}).Assign(attachment).FirstOrCreate(&attachment)
+			attachments[i] = attachment
 		}
-		initializer.DB.Where(model.Attachment{ID: i + 1}).Assign(attachment).FirstOrCreate(&attachment)
-		attachments[i] = attachment
+
+		// Update the attachments for the todo
+		todo.Attachments = attachments
+		initializer.DB.Save(&todo)
+
+		// Redirect to the home page
+		c.Redirect(302, "/")
+		fmt.Println("data save updated")
+	} else {
+		form, err := c.MultipartForm()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		var data model.Todo
+		if err := c.Bind(&data); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid",
+			})
+			return
+
+		}
+
+		data.Stage = "todo"
+		files := form.File["myfile"]
+
+		attachements := make([]model.Attachment, len(files))
+		for i, file := range files {
+
+			err = c.SaveUploadedFile(file, "/home/vivek-valand/go/src/to-do-list/assets/images/"+file.Filename)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			attachements[i] = model.Attachment{
+				Files:  "/assets/images/" + file.Filename,
+				TodoID: data.Id,
+			}
+
+			if err := initializer.DB.Create(&attachements[i]).Error; err != nil {
+				fmt.Println(err)
+			}
+
+		}
+		data.Attachments = attachements
+
+		initializer.DB.AutoMigrate(&model.Todo{})
+		res := initializer.DB.Create(&data)
+
+		if res.Error != nil {
+			fmt.Println(res.Error)
+			c.Status(400)
+		} else {
+			c.Status(200)
+			c.Redirect(302, "/")
+		}
+		fmt.Println("data save inserted")
+
 	}
-
-	// Update the attachments for the todo
-	todo.Attachments = attachments
-	initializer.DB.Save(&todo)
-
-	// Redirect to the home page
-	c.Redirect(302, "/")
 }

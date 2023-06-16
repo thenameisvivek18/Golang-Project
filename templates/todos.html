@@ -9,6 +9,7 @@
     integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
   <link rel="stylesheet" href="./public/css/style.css">
   <script src="./public/js/script.js"></script>
+  <script src="https://kit.fontawesome.com/74106c76f4.js" crossorigin="anonymous"></script>
 </head>
 <body class="back">
   <div class="container">
@@ -38,7 +39,11 @@
                 </div>
                 <div class="mb-3">
                   <label for="myfile" class="form-label">Select a file:</label>
-                  <input type="file" id="myfile" class="form-control" name="myfile" multiple="multiple">
+                  &nbsp; &nbsp;
+                  <label for="myfile"> 
+                    <i class="fa-solid fa-2x fa-arrow-up-from-bracket"></i>
+                  </label>
+                  <input type="file" id="myfile" class="form-control" name="myfile" multiple="multiple" style="display:none;" >
                 </div>
                 <div class="mb-3">
                   <input type="submit" value="Add Todo" class="form-control btn btn-success">
@@ -52,10 +57,10 @@
       <!-- The Modal -->
       <div class="modal fade" id="atcModal">
         <div class="modal-dialog">
-          <div class="modal-content">
+          <div class="modal-content" style="width: 17rem;">
             <!-- Modal Header -->
             <div class="modal-header">
-              <h4 class="modal-title">Modal Heading</h4>
+              <h4 class="modal-title">Manage Todos</h4>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <!-- Modal body -->

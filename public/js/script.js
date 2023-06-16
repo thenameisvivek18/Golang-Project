@@ -95,13 +95,23 @@ async function getMoreData(data) {
   let res = await alldatasingleId.json();
   console.log(res);
   secondpopupdiv = document.getElementById("atcbody");
+  var imagearray = [];
+  let lengthofimage = res[0].Attachments.length;
+  console.log("lengthofimage :- ", lengthofimage)
   let imgSrc = "./assets/images/todo.jpg";
-  if (res[0].Attachments.length > 0) {
+  if (lengthofimage > 0) {
     imgSrc = res[0].Attachments[0].Files;
+    for (let i = 0; i < lengthofimage; i++) {
+      let url = res[0].Attachments[i].Files;
+      var imageshow = `<img src="${url}" width="30%" />`;
+      imagearray.push(imageshow);
+    }
   }
-  demo += ` <div class="card mb-3" style="width: 15rem;" id="${res[0].Id}_modal" onclick="getMoreData(this)">
+  demo += ` <div class="card mb-3" style="width: 15rem;" id="${res[0].Id}_modal">
   <form action="/addtodo" method="post" enctype="multipart/form-data"> 
-  <img src="${imgSrc}" class="card-img-top" alt="..."  data-bs-toggle="modal" data-bs-target="#atcModal" >  
+  <div class="cover-image">
+  <img src="${imgSrc}" class="card-img-top" alt="..."  data-bs-toggle="modal" data-bs-target="#atcModal">  
+  </div>
   <input type="text" name="todo_id" value="${res[0].Id}" hidden>
   <div class="card-body">
         <h5 class="card-title">
@@ -119,6 +129,10 @@ async function getMoreData(data) {
           <input type="file" id="myfile" class="form-control" name="myfile" multiple="multiple" value="${imgSrc}">
           </div>
           <div class="mb-3">
+          <label for="" class="form-label">Attachments</label>
+          ${imagearray}
+          </div>
+          <div class="mb-3">
         <select name="stage" id="${res[0].Id} "onchange="stateChange(this)">
             <option value="" selected>ToDo</option>
             <option value="hold">Hold</option>
@@ -134,4 +148,3 @@ async function getMoreData(data) {
     </div>`;
   secondpopupdiv.innerHTML = demo;
 }
-
